@@ -615,7 +615,6 @@ for index, transfer := range historicalTransfers {
 
     transfersBatch = append(transfersBatch, transfer)
 }
-
 transferErrors, err := client.CreateTransfers(transfersBatch)
 // Error handling omitted..
 // Since it is a linked chain, in case of any error the entire batch is rolled back and can be retried

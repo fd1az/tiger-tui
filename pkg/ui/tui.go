@@ -204,15 +204,7 @@ func (m Model) View() string {
 
 // viewConnection renders the connection screen.
 func (m Model) viewConnection() string {
-	// Center the form
 	formContent := m.connForm.View()
-
-	// Center horizontally
-	formWidth := lipgloss.Width(formContent)
-	leftPad := (m.width - formWidth) / 2
-	if leftPad < 0 {
-		leftPad = 0
-	}
 
 	// Center vertically
 	formHeight := lipgloss.Height(formContent)
@@ -223,11 +215,8 @@ func (m Model) viewConnection() string {
 
 	var sb strings.Builder
 	sb.WriteString(strings.Repeat("\n", topPad))
-	for _, line := range strings.Split(formContent, "\n") {
-		sb.WriteString(strings.Repeat(" ", leftPad))
-		sb.WriteString(line)
-		sb.WriteString("\n")
-	}
+	sb.WriteString(formContent)
+	sb.WriteString("\n")
 
 	// Fill remaining space, then status bar
 	currentHeight := topPad + formHeight + 1

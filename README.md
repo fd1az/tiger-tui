@@ -1,105 +1,86 @@
 # tiger-tui
 
-A terminal UI for [TigerBeetle](https://tigerbeetle.com) — like TablePlus, but for your ledger.
+A terminal UI for [TigerBeetle](https://tigerbeetle.com): TablePlus-style ledger operations directly in the terminal.
 
-```
- ████████╗██╗ ██████╗ ███████╗██████╗       ████████╗██╗   ██╗██╗
- ╚══██╔══╝██║██╔════╝ ██╔════╝██╔══██╗      ╚══██╔══╝██║   ██║██║
-    ██║   ██║██║  ███╗█████╗  ██████╔╝  █████╗ ██║   ██║   ██║██║
-    ██║   ██║██║   ██║██╔══╝  ██╔══██╗  ╚════╝ ██║   ██║   ██║██║
-    ██║   ██║╚██████╔╝███████╗██║  ██║         ██║   ╚██████╔╝██║
-    ╚═╝   ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝         ╚═╝    ╚═════╝ ╚═╝
-```
+## Estado actual
 
-Browse accounts, inspect transfers, and verify balance sheets — all from
-your terminal with a keyboard-driven workflow designed for operators.
+Proyecto migrado a Go + Bubble Tea.
 
-## Features
+Implementado hoy:
+- Pantalla de conexión (`cluster_id`, `address`).
+- Dashboard shell con tabs: Accounts, Transfers, Balance Sheet.
+- Tema visual y status bar.
+- Logging a archivo (`tiger-tui.log`).
 
-- **Connection screen** — connect to any TigerBeetle cluster by ID and address
-- **Dashboard with tabs** — Accounts, Transfers, Balance Sheet
-- **Chart of accounts** — human-readable labels for ledger IDs, account codes, transfer codes, and venues (Terrace ledger-v2 compatible)
-- **Mainframe Modern theme** — high-contrast dark palette with semantic colors (amber accent, green/yellow/red status)
-- **Keyboard-first** — Tab/Shift+Tab navigation, vim-style keybinds (planned)
+Pendiente:
+- Conexión real a TigerBeetle (hoy está simulada en la UI).
+- Carga de accounts/transfers/balance sheet reales.
 
-## Requirements
+## Stack
 
-- Rust 2024 edition (1.85+)
-- A running [TigerBeetle](https://docs.tigerbeetle.com/) instance (for full functionality)
+- Go 1.25+
+- Bubble Tea + Bubbles + Lip Gloss
+- Viper
+- Paquetes internos para logger, DI, cache, circuit breaker y errores tipados
+
+## Requisitos
+
+- Go 1.25 o superior
+- (Opcional por ahora) TigerBeetle local para pruebas de integración futuras
 
 ## Quick start
 
 ```bash
-# Clone and build
 git clone https://github.com/fd1az/tiger-tui.git
 cd tiger-tui
-cargo build --release
 
-# Start a local TigerBeetle (if you don't have one running)
-tigerbeetle format --cluster=0 --replica=0 --replica-count=1 0_0.tigerbeetle
-tigerbeetle start --addresses=3000 0_0.tigerbeetle
+# Ejecutar
+go run ./cmd/tiger-tui
 
-# Run
-cargo run --release
+# o con Makefile
+make run
 ```
-
-Connect with cluster ID `0` and address `3000`, then press **Connect**.
 
 ## Keybindings
 
-| Key | Action |
+| Key | Acción |
 |---|---|
-| `Tab` / `Shift+Tab` | Navigate fields / cycle tabs |
-| `Enter` | Submit / select |
-| `q` / `Esc` | Quit / back |
-| `Ctrl+C` | Force quit |
+| `Tab` / `Shift+Tab` | Navegar campos / cambiar tab |
+| `Enter` | Submit / seleccionar |
+| `Esc` | Volver a Connection desde Dashboard |
+| `q` | Salir |
+| `Ctrl+C` | Salir forzado |
 
-## Architecture
+## Estructura
 
-Two patterns combined:
-
-- **The Elm Architecture (TEA)** for the UI loop — `AppState` (Model) → `Message` → `update()` → `view()`
-- **Hexagonal Architecture** for modules — domain, ports, infra, and UI layers per feature
-
-```
-src/
-├── main.rs                     # Terminal setup, TEA main loop
-├── shared/
-│   ├── app_state.rs            # Global model (Screen, Tab, ConnectionForm)
-│   ├── message.rs              # Message enum + update() reducer
-│   ├── event.rs                # Crossterm event polling (mpsc channel)
-│   ├── error.rs                # AppError (thiserror)
-│   └── domain/
-│       └── chart_of_accounts.rs  # Ledger/account/transfer/venue mappings
-├── modules/
-│   └── connection/
-│       └── ui/
-│           └── connection_view.rs  # Connection screen renderer
-└── ui/
-    ├── mod.rs                  # View dispatcher
-    ├── theme.rs                # Mainframe Modern color tokens
-    ├── dashboard.rs            # Dashboard layout (tabs + content)
-    └── status_bar.rs           # Status bar (connection info + hints)
+```text
+cmd/tiger-tui/main.go         # Entry point
+pkg/ui/                       # Bubble Tea model, mensajes y componentes TUI
+internal/config/              # Configuración
+internal/logger/              # Logging estructurado
+internal/apperror/            # Errores de aplicación
+internal/di/                  # Contenedor DI
+internal/cache/               # Cache utilitaria
+internal/circuitbreaker/      # Circuit breaker
+business/accounts/domain/     # Mapping y dominio de cuentas
 ```
 
-## Development
+## Desarrollo
 
 ```bash
-# Format, lint, test
-cargo fmt --all
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test
+make fmt
+make vet
+make test
+make check
 ```
-
-Clippy runs with pedantic lints enabled. See `[lints]` in `Cargo.toml` for the full configuration.
 
 ## Roadmap
 
-- [x] Phase 1 — Scaffold, connection screen, dashboard shell
-- [ ] Phase 2 — TigerBeetle client integration (async bridge via tokio + mpsc)
-- [ ] Phase 3 — Accounts table, transfers table, balance sheet with trial balance
-- [ ] Phase 4 — Create account/transfer forms
-- [ ] Phase 5 — Lookup by ID, auto-refresh, balance sparklines
+- [x] Fase 1: scaffold TUI + pantalla de conexión + dashboard shell
+- [ ] Fase 2: integración real con TigerBeetle Go client
+- [ ] Fase 3: tablas de Accounts/Transfers + Balance Sheet
+- [ ] Fase 4: formularios Create Account/Create Transfer
+- [ ] Fase 5: lookup, auto-refresh y mejoras de detalle
 
 ## License
 

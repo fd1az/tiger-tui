@@ -141,19 +141,24 @@ func (f *ConnectionForm) View() string {
 	dimStyle := lipgloss.NewStyle().Foreground(colorDim)
 	errStyle := lipgloss.NewStyle().Foreground(colorError)
 
+	w := f.width
+	if w < 1 {
+		w = 80
+	}
+
 	var sb strings.Builder
 
 	// Logo
 	logo := `
- ████████╗██╗ ██████╗ ███████╗██████╗       ████████╗██╗   ██╗██╗
- ╚══██╔══╝██║██╔════╝ ██╔════╝██╔══██╗      ╚══██╔══╝██║   ██║██║
-    ██║   ██║██║  ███╗█████╗  ██████╔╝ ─────   ██║   ██║   ██║██║
-    ██║   ██║██║   ██║██╔══╝  ██╔══██╗         ██║   ██║   ██║██║
-    ██║   ██║╚██████╔╝███████╗██║  ██║         ██║   ╚██████╔╝██║
-    ╚═╝   ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝         ╚═╝    ╚═════╝ ╚═╝`
-	sb.WriteString(accentBold.Render(logo))
+ ████████╗██╗ ██████╗ ███████╗██████╗          ████████╗██╗   ██╗██╗
+ ╚══██╔══╝██║██╔════╝ ██╔════╝██╔══██╗         ╚══██╔══╝██║   ██║██║
+    ██║   ██║██║  ███╗█████╗  ██████╔╝ ██████     ██║   ██║   ██║██║
+    ██║   ██║██║   ██║██╔══╝  ██╔══██╗ ══════     ██║   ██║   ██║██║
+    ██║   ██║╚██████╔╝███████╗██║  ██║            ██║   ╚██████╔╝██║
+    ╚═╝   ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝            ╚═╝    ╚═════╝ ╚═╝`
+	sb.WriteString(lipgloss.PlaceHorizontal(w, lipgloss.Center, accentBold.Render(logo)))
 	sb.WriteString("\n")
-	sb.WriteString(dimStyle.Render("              the best client for tigerbeetle"))
+	sb.WriteString(lipgloss.PlaceHorizontal(w, lipgloss.Center, dimStyle.Render("the best client for tigerbeetle")))
 	sb.WriteString("\n\n")
 
 	// Form box
@@ -176,7 +181,7 @@ func (f *ConnectionForm) View() string {
 	var btnText string
 	switch f.status {
 	case 1:
-		btnText = lipgloss.NewStyle().Foreground(colorWarning).Bold(true).Render("  Connecting...  ")
+		btnText = lipgloss.NewStyle().Foreground(colorWarning).Bold(true).Padding(0, 2).Render("Connecting...")
 	default:
 		if f.focused == 2 {
 			btnText = lipgloss.NewStyle().
@@ -187,14 +192,12 @@ func (f *ConnectionForm) View() string {
 				Render("● Connect")
 		} else {
 			btnText = lipgloss.NewStyle().
-				Foreground(colorAccent).
-				Border(lipgloss.NormalBorder()).
-				BorderForeground(colorBorder).
+				Foreground(colorDim).
 				Padding(0, 2).
 				Render("● Connect")
 		}
 	}
-	// Center the button within the form width
+	// Center the button within the form inner width
 	btnWidth := lipgloss.Width(btnText)
 	innerWidth := formWidth - 6 // account for box padding + border
 	btnPad := (innerWidth - btnWidth) / 2
@@ -212,12 +215,12 @@ func (f *ConnectionForm) View() string {
 	// Render form in a box
 	formBox := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(colorBorder).
+		BorderForeground(colorMuted).
 		Padding(1, 2).
 		Width(formWidth).
 		Render(form.String())
 
-	sb.WriteString(formBox)
+	sb.WriteString(lipgloss.PlaceHorizontal(w, lipgloss.Center, formBox))
 
 	return sb.String()
 }
