@@ -70,6 +70,8 @@ var (
 
 	InactiveTabStyle = lipgloss.NewStyle().
 				Foreground(ColorMuted).
+				Border(lipgloss.NormalBorder(), false, false, true, false).
+				BorderForeground(ColorDim).
 				Padding(0, 2)
 
 	// Table

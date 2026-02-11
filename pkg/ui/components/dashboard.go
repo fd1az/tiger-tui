@@ -52,6 +52,8 @@ func (d *Dashboard) View() string {
 
 	inactiveStyle := lipgloss.NewStyle().
 		Foreground(colorMuted).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		BorderForeground(colorDim).
 		Padding(0, 2)
 
 	// Render tabs
