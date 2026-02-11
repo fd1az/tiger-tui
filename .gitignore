@@ -1,2 +1,4 @@
-/target
+tiger-tui
 tiger-tui.log
+dist/
+.env
