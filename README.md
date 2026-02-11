@@ -2,31 +2,31 @@
 
 A terminal UI for [TigerBeetle](https://tigerbeetle.com): TablePlus-style ledger operations directly in the terminal.
 
-## Estado actual
+## Current status
 
-Proyecto migrado a Go + Bubble Tea.
+Built with Go + Bubble Tea.
 
-Implementado hoy:
-- Pantalla de conexión (`cluster_id`, `address`).
-- Dashboard shell con tabs: Accounts, Transfers, Balance Sheet.
-- Tema visual y status bar.
-- Logging a archivo (`tiger-tui.log`).
+Implemented:
+- Connection screen (`cluster_id`, `address`)
+- Dashboard shell with tabs: Accounts, Transfers, Balance Sheet
+- Mainframe Modern theme and status bar
+- File logging (`tiger-tui.log`)
 
-Pendiente:
-- Conexión real a TigerBeetle (hoy está simulada en la UI).
-- Carga de accounts/transfers/balance sheet reales.
+Pending:
+- Real TigerBeetle connection (currently simulated in the UI)
+- Load actual accounts/transfers/balance sheet data
 
 ## Stack
 
 - Go 1.25+
 - Bubble Tea + Bubbles + Lip Gloss
 - Viper
-- Paquetes internos para logger, DI, cache, circuit breaker y errores tipados
+- Internal packages for logger, DI, cache, circuit breaker, and typed errors
 
-## Requisitos
+## Requirements
 
-- Go 1.25 o superior
-- (Opcional por ahora) TigerBeetle local para pruebas de integración futuras
+- Go 1.25 or higher
+- (Optional for now) Local TigerBeetle instance for future integration testing
 
 ## Quick start
 
@@ -34,38 +34,38 @@ Pendiente:
 git clone https://github.com/fd1az/tiger-tui.git
 cd tiger-tui
 
-# Ejecutar
+# Run directly
 go run ./cmd/tiger-tui
 
-# o con Makefile
+# Or with Makefile
 make run
 ```
 
 ## Keybindings
 
-| Key | Acción |
+| Key | Action |
 |---|---|
-| `Tab` / `Shift+Tab` | Navegar campos / cambiar tab |
-| `Enter` | Submit / seleccionar |
-| `Esc` | Volver a Connection desde Dashboard |
-| `q` | Salir |
-| `Ctrl+C` | Salir forzado |
+| `Tab` / `Shift+Tab` | Navigate fields / cycle tabs |
+| `Enter` | Submit / select |
+| `Esc` | Return to Connection from Dashboard |
+| `q` | Quit |
+| `Ctrl+C` | Force quit |
 
-## Estructura
+## Structure
 
 ```text
 cmd/tiger-tui/main.go         # Entry point
-pkg/ui/                       # Bubble Tea model, mensajes y componentes TUI
-internal/config/              # Configuración
-internal/logger/              # Logging estructurado
-internal/apperror/            # Errores de aplicación
-internal/di/                  # Contenedor DI
-internal/cache/               # Cache utilitaria
+pkg/ui/                       # Bubble Tea model, messages, and TUI components
+internal/config/              # Configuration
+internal/logger/              # Structured logging
+internal/apperror/            # Application errors
+internal/di/                  # DI container
+internal/cache/               # Utility cache
 internal/circuitbreaker/      # Circuit breaker
-business/accounts/domain/     # Mapping y dominio de cuentas
+business/accounts/domain/     # Account mapping and domain
 ```
 
-## Desarrollo
+## Development
 
 ```bash
 make fmt
@@ -76,11 +76,11 @@ make check
 
 ## Roadmap
 
-- [x] Fase 1: scaffold TUI + pantalla de conexión + dashboard shell
-- [ ] Fase 2: integración real con TigerBeetle Go client
-- [ ] Fase 3: tablas de Accounts/Transfers + Balance Sheet
-- [ ] Fase 4: formularios Create Account/Create Transfer
-- [ ] Fase 5: lookup, auto-refresh y mejoras de detalle
+- [x] Phase 1: TUI scaffold + connection screen + dashboard shell
+- [ ] Phase 2: Real TigerBeetle Go client integration
+- [ ] Phase 3: Accounts/Transfers tables + Balance Sheet
+- [ ] Phase 4: Create Account/Create Transfer forms
+- [ ] Phase 5: Lookup, auto-refresh, and detail improvements
 
 ## License
 
