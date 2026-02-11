@@ -1,7 +1,11 @@
 package ui
 
+import "github.com/fd1az/tiger-tui/business/connection/infra"
+
 // ConnectedMsg signals successful TigerBeetle connection.
-type ConnectedMsg struct{}
+type ConnectedMsg struct {
+	Client *infra.Client
+}
 
 // ConnectionFailedMsg signals a failed connection attempt.
 type ConnectionFailedMsg struct {

@@ -1,4 +1,5 @@
-tiger-tui
+/tiger-tui
+/bin/tiger-tui
 tiger-tui.log
 dist/
 .env

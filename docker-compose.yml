@@ -1,0 +1,26 @@
+services:
+  tigerbeetle-format:
+    image: ghcr.io/tigerbeetle/tigerbeetle
+    command: "format --cluster=0 --replica=0 --replica-count=1 /data/0_0.tigerbeetle"
+    security_opt:
+      - "seccomp=unconfined"
+    volumes:
+      - tb-data:/data
+
+  tigerbeetle:
+    image: ghcr.io/tigerbeetle/tigerbeetle
+    command: "start --addresses=0.0.0.0:3000 /data/0_0.tigerbeetle"
+    depends_on:
+      tigerbeetle-format:
+        condition: service_completed_successfully
+    ports:
+      - "3000:3000"
+    security_opt:
+      - "seccomp=unconfined"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - tb-data:/data
+
+volumes:
+  tb-data:

@@ -1,4 +1,4 @@
-.PHONY: help build run clean test fmt vet tidy lint install-tools dev
+.PHONY: help build run clean test fmt vet tidy lint install-tools dev tb-up tb-down tb-reset tb-logs
 
 # Load .env file if it exists
 ifneq (,$(wildcard .env))
@@ -134,6 +134,28 @@ install-tools: ## Install all development tools
 
 setup: install-tools deps ## Initial project setup
 	@echo "$(GREEN)Project setup complete$(NC)"
+
+# ============================================================================
+# TigerBeetle (Docker)
+# ============================================================================
+
+tb-up: ## Start TigerBeetle via Docker Compose
+	@echo "$(BLUE)Starting TigerBeetle...$(NC)"
+	@docker compose up -d tigerbeetle
+	@echo "$(GREEN)TigerBeetle running on port 3000$(NC)"
+
+tb-down: ## Stop TigerBeetle
+	@echo "$(YELLOW)Stopping TigerBeetle...$(NC)"
+	@docker compose down
+	@echo "$(GREEN)TigerBeetle stopped$(NC)"
+
+tb-reset: ## Stop TigerBeetle and delete data
+	@echo "$(RED)Resetting TigerBeetle (deleting all data)...$(NC)"
+	@docker compose down -v
+	@echo "$(GREEN)TigerBeetle reset complete$(NC)"
+
+tb-logs: ## Show TigerBeetle logs
+	@docker compose logs -f tigerbeetle
 
 # ============================================================================
 # Utility Commands

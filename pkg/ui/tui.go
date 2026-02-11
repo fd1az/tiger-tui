@@ -8,6 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
+	"github.com/fd1az/tiger-tui/business/connection/infra"
 	"github.com/fd1az/tiger-tui/pkg/ui/components"
 )
 
@@ -17,6 +18,9 @@ type Model struct {
 	connForm  components.ConnectionForm
 	dashboard components.Dashboard
 	statusBar components.StatusBar
+
+	// Connection
+	tbClient *infra.Client
 
 	// State
 	screen    Screen
@@ -78,6 +82,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// --- App messages ---
 	case ConnectedMsg:
+		m.tbClient = msg.Client
 		m.connStatus = Connected
 		m.screen = ScreenDashboard
 		m.connForm.SetStatus(2)
@@ -132,10 +137,7 @@ func (m Model) updateConnection(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.connForm.SetError("")
 			m.statusBar.SetMessage("Connecting...", 0)
 
-			// Phase 1: simulate connect (Phase 2 will do real TB connection)
-			return m, func() tea.Msg {
-				return ConnectedMsg{}
-			}
+			return m, ConnectCmd(m.connForm.ClusterID(), m.connForm.Address())
 		}
 		// Enter on text fields moves to next
 		m.connForm.FocusNext()
@@ -166,7 +168,11 @@ func (m Model) updateDashboard(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case key.Matches(msg, m.keys.Escape):
-		// Return to connection screen
+		// Close TB client and return to connection screen
+		if m.tbClient != nil {
+			m.tbClient.Close()
+			m.tbClient = nil
+		}
 		m.screen = ScreenConnection
 		m.connStatus = Disconnected
 		m.connForm.SetStatus(0)
